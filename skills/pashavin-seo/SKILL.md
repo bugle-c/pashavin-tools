@@ -147,10 +147,12 @@ Dashboard: https://pashavin.ru/admin/seo — Basic auth, password in `SEO_ADMIN_
 
 ## Models and tuning knobs
 
-LLM models (via Anthropic SDK, see `lib/seo/llm.ts`):
-- Default: `claude-sonnet-4-6` — all rewrites, seed extraction, relevance filter, factual/similarity, business takeaway.
-- Health ping: `claude-haiku-4-5` (cheaper, fast) — `app/api/admin/seo/health/route.ts`.
-- Change the default by passing `model:` in `LlmCallOptions` at call-site; don't globally flip — rewrite quality is sensitive.
+LLM models and auth:
+- `lib/seo/llm.ts` is **hybrid**: Anthropic SDK by default, `claude -p` CLI when `CLAUDE_USE_CLI=1`.
+- **Local batch on host**: set `CLAUDE_USE_CLI=1` in `.env.local` → `spawn("claude", ...)` uses OAuth (Max/Pro subscription quota). Good when API balance is empty.
+- **Prod Docker container**: CLI is NOT installed. Keep `CLAUDE_USE_CLI` unset → SDK path via `ANTHROPIC_API_KEY` from Dokploy env. Cron endpoints only work when API has credit.
+- Strip `ANTHROPIC_API_KEY` from CLI child env (we do this in `runClaudeCli`) so CLI doesn't route through API.
+- Default model `claude-sonnet-4-6`; health ping `claude-haiku-4-5` (`app/api/admin/seo/health/route.ts`). Pass `model:` in `LlmCallOptions` per-call to override.
 
 Magic numbers (adjust with care, each has a reason):
 
