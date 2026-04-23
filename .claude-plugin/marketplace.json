@@ -1,0 +1,14 @@
+{
+  "name": "pashavin-tools",
+  "owner": {
+    "name": "Pasha Vin",
+    "email": "2396741@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "pashavin-tools",
+      "source": "./",
+      "description": "Personal toolset for Pasha Vin: SEO framework (14 skills + 7 agents), project-specific flows (pashavin.ru, germanyun, GPTWeb), infrastructure skills (Dokploy, Supabase, Twenty CRM), and MCP servers configuration."
+    }
+  ]
+}
