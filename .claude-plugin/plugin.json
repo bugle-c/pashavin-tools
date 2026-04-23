@@ -1,0 +1,19 @@
+{
+  "name": "pashavin-tools",
+  "description": "Personal toolset for Pasha Vin: SEO framework (14 skills + 7 agents), project-specific flows (pashavin.ru, germanyun, GPTWeb), infrastructure skills (Dokploy, Supabase, Twenty CRM), and MCP servers configuration.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Pasha Vin",
+    "email": "2396741@gmail.com"
+  },
+  "homepage": "https://github.com/bugle-c/pashavin-tools",
+  "repository": "https://github.com/bugle-c/pashavin-tools",
+  "keywords": [
+    "seo",
+    "pashavin",
+    "dokploy",
+    "supabase",
+    "twenty-crm",
+    "claude-code"
+  ]
+}

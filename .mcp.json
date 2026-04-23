@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "exa": {
+      "type": "http",
+      "url": "https://mcp.exa.ai/mcp?exaApiKey=${EXA_API_KEY}&tools=web_search_exa,get_code_context_exa,deep_search_exa,crawling_exa,company_research_exa"
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest", "--headless=true", "--no-usage-statistics"]
+    },
+    "gemini-design": {
+      "command": "node",
+      "args": ["${GEMINI_DESIGN_MCP_PATH}/index.js"],
+      "env": {
+        "GEMINI_API_KEY": "${GEMINI_API_KEY}"
+      }
+    },
+    "gemini": {
+      "command": "npx",
+      "args": ["-y", "@rlabs-inc/gemini-mcp"],
+      "env": {
+        "GEMINI_API_KEY": "${GEMINI_API_KEY}"
+      }
+    },
+    "twenty-crm": {
+      "command": "bash",
+      "args": ["${TWENTY_CRM_MCP_PATH}/start.sh"]
+    }
+  }
+}
