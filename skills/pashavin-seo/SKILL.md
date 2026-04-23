@@ -105,7 +105,12 @@ Dashboard: https://pashavin.ru/admin/seo — Basic auth, password in `SEO_ADMIN_
 
 ### Blog vs Project
 - **Blog**: body is content-first. Default mode only touches title+description. `--deep` rewrites ONLY the first paragraph. Everything else (MDX body) is authorial.
-- **Project**: body in `data/projects-meta-cache.json` is structured (description/result/stack/challenge/solution). Pipeline is **metadata-only** — only `name` and `description` are ever written. Title format: `<brand> - <seoSuffix>`, brand preserved across re-runs via `stripSuffix()`.
+- **Project**: body in `data/projects-meta-cache.json` is structured (description/result/stack/challenge/solution). Pipeline is **metadata-only**.
+- **Project: name vs seoTitle** — two SEPARATE fields, do NOT merge:
+  - `name` = brand only (e.g. "Arb Scanner"), used by the UI card / h1.
+  - `seoTitle` = full SEO string (e.g. "Arb Scanner - арбитраж в ставках"), used ONLY in `generateMetadata` → `<title>` tag.
+  - Why split: `<brand> - <suffix> — Паша Вин` template overflows project cards in the UI design.
+  - PROJECT_PROMPT asks LLM for `seoSuffix`; `writeContent` splits `"brand - suffix"` back into the two fields and updates both `projects-meta-cache.json` AND `projects-generated.ts`.
 
 ### Description rules
 - 120-165 chars, enforced by `checkSeo`.
