@@ -18,7 +18,7 @@ Deploy Next.js apps via GitHub Actions → GHCR → SSH pull + service update on
 | VPS IP | `5.35.80.222` |
 | GHCR Registry ID | `mX2azxgDrTTaNHp5yuShv` (name: `ghcr`) |
 | GitHub org | `bugle-c` |
-| SSH key (VPS) | `/home/deploy/.ssh/id_ed25519` → `root@5.35.80.222` |
+| SSH key (VPS) | `/home/deploy/.ssh/id_ed25519` → `root@135.181.115.234` |
 | SSH key (GitHub) | `/home/deploy/.ssh/github_deploy` |
 | DNS | Wildcard `*.pashavin.ru` → `5.35.80.222` |
 | git-auto-sync | `~/.claude/scripts/git-auto-sync.sh` |
@@ -84,7 +84,7 @@ curl -s -X POST "https://deploy.pashavin.ru/api/application.update" \
     \"applicationId\":\"$APP_ID\",
     \"sourceType\":\"docker\",
     \"dockerImage\":\"ghcr.io/bugle-c/<name>:latest\",
-    \"registryId\":\"mX2azxgDrTTaNHp5yuShv\"
+    \"registryId `me8i2YOWSfydCd3TWvsAk` (was KZ: mX2az...) \"
   }"
 ```
 
@@ -92,7 +92,7 @@ curl -s -X POST "https://deploy.pashavin.ru/api/application.update" \
 
 After first deploy via Dokploy UI, find the generated service name:
 ```bash
-ssh root@5.35.80.222 'docker service ls --format "{{.Name}} {{.Image}}" | grep <name>'
+ssh root@135.181.115.234 'docker service ls --format "{{.Name}} {{.Image}}" | grep <name>'
 ```
 
 ### 5. Create GitHub Actions workflow
@@ -219,7 +219,7 @@ tasks/
 | **SSH broken pipe** | **Long pull, SSH timeout** | **Add `-o ServerAliveInterval=15`** |
 | **NEXT_PUBLIC vars = localhost** | **Build args not passed in GHA** | **Add `build-args` + set `gh variable`** |
 | GHCR push 403 | Missing `packages: write` permission | Check `permissions:` block in workflow |
-| Dokploy can't pull image | Registry not linked | Set `registryId: "mX2azxgDrTTaNHp5yuShv"` |
+| Dokploy can't pull image | Registry not linked | Set `registryId `me8i2YOWSfydCd3TWvsAk` (was KZ: mX2az...) "` |
 | **Slow pull (5+ min)** | **Large image (>400 MB)** | **Optimize Dockerfile, reduce standalone bundle** |
 | Build takes 20+ min on GHA | No layer cache | Verify `cache-from: type=gha` in workflow |
 
