@@ -11,7 +11,9 @@ Everything you need to operate and extend the custom keyword-research + content-
 
 ```
 lib/seo/
-  llm.ts                    # Anthropic SDK wrapper + llmJson (tolerates trailing text, extracts first balanced JSON)
+  llm.ts                    # Hybrid: Anthropic SDK (default) OR `claude` CLI when CLAUDE_USE_CLI=1.
+                            # CLI path uses --disallowedTools "Read Write Edit …" + --max-turns 1 so
+                            # Claude Code returns raw LLM output instead of tool-refusal prose.
   wordstat-client.ts        # xmlriver client: wordstat() + getPosition() + getCompetition(keyword, frequency)
   yandex-webmaster-client.ts# impressions/queries + pingIndexNow()
   seed-extractor.ts         # LLM distils 3-5 market-shaped seeds from a draft
@@ -41,6 +43,25 @@ scripts/seo-regen-takeaway.ts # regenerate ONLY businessTakeaway for a blog (no 
 sql/pashavin_seo/*.sql      # schema + grants in Supabase schema `pashavin_seo`
 ```
 
+## Two content streams on /blog
+
+`/blog` has two categories, filter chips + search:
+
+| Category | Source | Generator | When |
+|---|---|---|---|
+| **Статьи** (`category: article`) | `data/seo-content-queue.json` — hand-curated SEO topics | `scripts/seo-generate-articles.ts` | cron (to be set): daily, `--per-day=3` |
+| **Логи разработки** (`category: dev-log`, default) | Claude Code session logs | `scripts/generate-blog-batch.ts` → `auto-blog.sh` | host cron 04:30 daily |
+
+- `BlogPost.category` in `lib/blog.ts` defaults to `dev-log` for backward compat.
+- `/blog` served by `app/blog/page.tsx` (server) + `app/blog/blog-index-client.tsx` (client): filter/search, featured top-3, compact 2-col grid, pagination, tags on top (popular = ≥ max(3, 5%) of posts), archive by year.
+
+### SEO article queue (`data/seo-content-queue.json`)
+
+- Schema: `{ status, slug, primary, cluster, caseProjects[], angle, publishedAt? }`.
+- `status`: `queued → drafted → published` (or `failed` with `error`).
+- Generator flow: pick first N `queued` → LLM writes MDX (voice + case projects from `projects-meta-cache.json`) → `runSeoOptimize({ deep: true })` → mark `published`.
+- Status update is non-destructive even if the SEO pipeline freezes — article goes live either way.
+
 ## Daily commands
 
 ```bash
@@ -58,6 +79,16 @@ npm run seo:optimize -- --rollback=blog:<slug>
 
 # Regenerate only the businessTakeaway without re-running cluster/rewrite
 npx tsx scripts/seo-regen-takeaway.ts --slug=<blog-slug>
+
+# Generate N SEO articles from the queue (default --per-day=3)
+npx tsx scripts/seo-generate-articles.ts --per-day=3
+npx tsx scripts/seo-generate-articles.ts --slug=<queue-slug>  # single forced topic
+
+# Keyword research one-off: seed list → Wordstat + competition → top-N JSON
+npx tsx scripts/seo-keyword-research.ts  # edit CLUSTERS at the top to change seeds
+
+# Repair artefacts stuck in body after deep-rewrite bug
+npx tsx scripts/seo-repair-artefacts.ts
 
 # Manual cron triggers (SEO_CRON_SECRET in env)
 curl -X POST -H "Authorization: Bearer $SEO_CRON_SECRET" https://pashavin.ru/api/seo/cron-positions
@@ -226,6 +257,10 @@ PostgREST schema must include `pashavin_seo` in `PGRST_DB_SCHEMAS` (self-hosted 
 | Stem check false-negative (primary present but guardrail fails) | Kept `\b` regex in old stemmer — doesn't match Cyrillic | Current impl in `guardrails/seo.ts` tokenises and stems per-word; don't revert to single-regex stem. |
 | LLM returns prose instead of JSON in similarity/factual | Model ignored JSON instruction | Both wrapped in try/catch with safe defaults (sim=0.9, factual=ok). Don't block pipeline on parse fails; log and move on. |
 | Project changes in cache but `/projects/<slug>` still shows old title | **Two-file gotcha**: site renders from `data/projects-generated.ts`, NOT from `data/projects-meta-cache.json`. | `writeContent` for projects calls `syncGeneratedProject()` which bracket-matches the `= [` after `generatedProjects` marker, JSON-parses the array, patches the slug, writes back. If you regress this, projects-generated.ts will drift from the cache and live pages won't update. |
+| CLI returns "Нет прав на запись" / "Одобри изменение" prose inside blog body | Claude Code CLI tried Edit/Write tools, got denied, replied with refusal prose | `llm.ts` must pass `--disallowedTools "Read Write Edit Bash Glob Grep WebFetch WebSearch NotebookEdit TodoWrite Task"` and `--max-turns 1`. If you see it again, these flags got dropped. Repair stuck posts with `scripts/seo-repair-artefacts.ts` (pulls original first paragraph from earliest snapshot). |
+| Auto-blog generates duplicate posts per project every week | Dedup regex in `generate-blog-batch.ts` matched only `date: "…"` (double quotes); YAML files use single or no quotes | Regex now accepts single/double/no quotes. Plus `RECENT_ARTICLE_WINDOW_MS=60d` and `MIN_TOTAL_CONTENT_KB=2048` — small changes stack across runs instead of spawning a tiny post. |
+| 404 on `/blog/<slug>` with Cyrillic in URL | Next.js SSG is inconsistent with mixed Latin+Cyrillic slugs (e.g. `adminка`) | Rename file and `slug:` in frontmatter to pure ASCII. Add old→new redirect only if already indexed. |
+| Anthropic API balance hits zero mid-batch | `ANTHROPIC_API_KEY` credit empty | Set `CLAUDE_USE_CLI=1` in `.env.local` → `lib/seo/llm.ts` routes to `claude -p` subprocess using OAuth/subscription instead of API credits. Prod container still uses SDK — need to top up for cron-reoptimize to work. |
 
 ## Overlap with other pashavin.ru skills
 
