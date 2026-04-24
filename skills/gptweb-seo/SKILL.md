@@ -274,6 +274,13 @@ emails from `ADMIN_EMAILS` env).
   (tokens/image/second), input/output per 1M, per_unit. Cost preview
   widget. Switching pricing_unit nulls stale fields (DB CHECK enforces
   mutual exclusion).
+- `/admin/finance/api-costs` — invoice-vs-booked audit for API
+  providers. Month×provider table: `invoiced_usd` (from
+  `manual_expenses` `category='api'`) vs `booked_usd` (from
+  `usage_logs.cost_usd` mapped via `lib/provider-mapping.ts`:
+  anthropic/openai direct, everything else → openrouter). Δ% red at
+  >20% — signal that `writeUsageLog` is dropping rows. Summary shows
+  gross margin %. Chart: stacked bar invoice vs revenue + margin line.
 - `/admin/blog/[id]` — article editor with Canonical URL input in the
   SEO collapsible. Blank = self-canonical; fill `/blog/...` to point to
   a dup leader.
