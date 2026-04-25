@@ -291,6 +291,21 @@ emails from `ADMIN_EMAILS` env).
 - `/admin/blog/clusters` — read-only `blog_clusters` browser with
   related_keywords, avg_competition, status.
 
+## Light/Pro UI modes (end-user side)
+
+Aggregator at `ask.gptweb.ru/chat` has a per-user runtime UI toggle in
+top-bar: `[ ✨ Light │ ⚙️ Pro ]`. Persisted in
+`user_onboarding.ui_mode ∈ {'light','pro'}` (default `'light'` for all
+users). See memory file `light_pro_modes.md` for full architecture.
+
+**SEO-relevant:** the upstream LobeChat onboarding flow at `/onboarding`
+is fully BYPASSED — `useWebUserStateRedirect` is no-op; `/onboarding`
+hard-redirects to `/chat`. Welcome modal in chat handles new-user UX
+instead. Don't link to `/onboarding` in SEO copy or marketing.
+
+Pricing/upgrade buttons should always link to **`/settings/plans`**
+(NOT `/settings/subscription/plans` — that's a 404 in our build).
+
 ## Common tasks
 
 ### Add a new category
