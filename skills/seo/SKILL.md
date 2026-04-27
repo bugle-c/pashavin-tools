@@ -20,6 +20,33 @@ Comprehensive SEO analysis across all industries (SaaS, local services,
 e-commerce, publishers, agencies). Orchestrates 12 specialized sub-skills
 and 6 subagents (+ optional extension sub-skills).
 
+## Project-specific standards (READ FIRST)
+
+When working on **pashavin.ru** (`/home/deploy/projects/pashavin.ru`),
+ALWAYS read `references/pashavin-ru-standards.md` **before** writing
+prompts, generating content, or making metadata changes. That file encodes
+the audit-derived rules for title length, title↔H1 alignment, question-led
+H2 structure, direct-answer intros, freshness signals, image dimensions,
+and Yandex trust paths (`/privacy`, `/contacts`, footer requisites).
+
+For other sites — fall back to general best practices below.
+
+## Audit tooling
+
+This skill provides strategy and standards, but it does NOT crawl pages
+itself. For actual audits (Google + Yandex findings, JSON + Markdown
+reports, per-template scoring), invoke the **indexlift-seo-auditor**
+skill:
+
+```bash
+node /home/deploy/.claude/skills/indexlift-seo-auditor/scripts/run-audit.js \
+  --url "<URL>" --tier standard --engines google,yandex \
+  --output /tmp/seo-audit/
+```
+
+Use this whenever the user asks for an "audit" — `claude-seo` covers
+strategy/standards, `indexlift-seo-auditor` runs the actual checks.
+
 ## Quick Reference
 
 | Command | What it does |
