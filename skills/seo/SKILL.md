@@ -29,7 +29,26 @@ the audit-derived rules for title length, title↔H1 alignment, question-led
 H2 structure, direct-answer intros, freshness signals, image dimensions,
 and Yandex trust paths (`/privacy`, `/contacts`, footer requisites).
 
-For other sites — fall back to general best practices below.
+## Russian-market projects (Yandex + RU AI engines) — READ FIRST
+
+For ANY Russian-language commercial site (pashavin.ru, gptweb.ru,
+likedog.ru, x10seo.ru, germanyun.ru, kp.pashavin.ru, etc.), read
+`references/yandex-geo-ru-rules.md` **before** writing prompts or
+auditing. It overrides generic English-market guidance with:
+
+- Behavioural signals (dwell-time, scroll-depth) as Yandex ranking #1
+- 1200-1500 word floor for RU commercial pages (not Google's "topical floor")
+- Yandex trust paths: privacy + cookies + cookies-banner + custom 404 +
+  legal requisites in footer + Я.Метрика (mandatory) + GA4 РКН-уведомление
+- JSON-LD set per page-type (Course, Service, LocalBusiness, etc.)
+- Long-tail-only keyword strategy (no fight on "bitcoin", "trading")
+- Image copyright (only own / AI-generated; stock = 10k-250k ₽ fines in RF)
+- GEO/AI optimization: definition-first intro, question-led H2,
+  134-167 word answer blocks, /llms.txt, AI-bot allowlist in robots.txt
+- Cursor vibe-coding workflow: block-by-block, version every theme zip,
+  Gemini for visual, GPT-5.4 for code
+
+For non-RU sites — fall back to general best practices below.
 
 ## Audit tooling
 
