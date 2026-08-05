@@ -21,10 +21,10 @@ export function normalizeUrl(rawUrl, baseUrl = null) {
       url.searchParams.append(key, value);
     }
 
-    if (url.pathname.length > 1 && url.pathname.endsWith('/')) {
-      url.pathname = url.pathname.slice(0, -1);
-    }
-
+    // Preserve trailing slashes on non-root paths. Some frameworks (for example
+    // strict trailingSlash Next.js deployments) redirect /path -> /path/.
+    // Stripping the slash before every fetch can create artificial redirect
+    // loops and false page-fetch-coverage failures.
     return url.toString();
   } catch {
     return null;
