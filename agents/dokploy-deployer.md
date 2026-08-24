@@ -19,7 +19,7 @@ You deploy Next.js apps via GitHub Actions → GHCR → SSH pull + service updat
 
 ```
 DOKPLOY_URL=https://deploy.pashavin.ru
-API_KEY=AUEXKnibHiiBpfBjZUcFnESzelQAKllLgCQRnflgxzbOKoYhIxdpxVucpbubEkHU
+API_KEY=$DOKPLOY_API_KEY
 VPS_IP=5.35.80.222
 GHCR_REGISTRY_ID=mX2azxgDrTTaNHp5yuShv
 GITHUB_ORG=bugle-c

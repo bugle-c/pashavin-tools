@@ -14,7 +14,7 @@ Deploy Next.js apps via GitHub Actions → GHCR → SSH pull + service update on
 | Item | Value |
 |------|-------|
 | Dokploy URL | `https://deploy.pashavin.ru` |
-| API auth | `x-api-key: AUEXKnibHiiBpfBjZUcFnESzelQAKllLgCQRnflgxzbOKoYhIxdpxVucpbubEkHU` |
+| API auth | `x-api-key: $DOKPLOY_API_KEY` |
 | VPS IP | `5.35.80.222` |
 | GHCR Registry ID | `mX2azxgDrTTaNHp5yuShv` (name: `ghcr`) |
 | GitHub org | `bugle-c` |
@@ -59,7 +59,7 @@ gh repo create bugle-c/<name> --private --source=. --push
 ### 2. Create Dokploy project + app
 
 ```bash
-API_KEY="AUEXKnibHiiBpfBjZUcFnESzelQAKllLgCQRnflgxzbOKoYhIxdpxVucpbubEkHU"
+API_KEY="$DOKPLOY_API_KEY"
 
 # Create project
 PROJECT=$(curl -s -X POST "https://deploy.pashavin.ru/api/project.create" \

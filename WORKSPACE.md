@@ -23,7 +23,7 @@ This is a multi-project workspace containing:
 
 ### Dokploy (deployment) — мигрирован KZ → Hetzner 2026-04-24
 - **URL:** `https://deploy.pashavin.ru` (VPS: **`135.181.115.234`** — Hetzner, Helsinki)
-- **API key:** `HXFWBzzjMucGmaquIEwgvfVcpLmbtSySlUQagfONmrclqtsKvKxpbhAmNBOmVnjS` (saved in `/home/deploy/.env.dokploy-hz`)
+- **API key:** `$DOKPLOY_HZ_API_KEY` (saved in `/home/deploy/.env.dokploy-hz`)
 - **Purpose:** self-hosted PaaS replacing Vercel (blocked in Russia since June 2025)
 - **Architecture:** Caddy (host:80/443, SSL для всех доменов) → Dokploy Traefik (`127.0.0.1:9080`, плейн HTTP) → Docker Swarm services
 - **Deploy pattern:** `output: "standalone"` в next.config + multi-stage Dockerfile (node:20-alpine)
